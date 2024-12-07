@@ -1,0 +1,1 @@
+IF NOT EXISTS(SELECT name FROM sys.databases WHERE name=N'bd_laby') CREATE DATABASE bd_laby
