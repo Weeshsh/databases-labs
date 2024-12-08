@@ -18,26 +18,27 @@ INSERT INTO FIRMY_TRANSPORTOWE (NAZWA, NUMER_TELEFONU, EMAIL) VALUES
 ('TransportDostawa', '860749601', 'transportdostawa400@gmail.com');
 
 INSERT INTO PRACOWNICY (IMIE, NAZWISKO, EMAIL, CZY_PRACUJE, PRZELOZONY, MIEJSCE_PRACY, STANOWISKO) VALUES
-('Bartosz', 'Kozak', 'bartosz220@gmail.com', 1, 3, 'Magazyn', NULL),
-('Adam', 'Nowak', 'adam270@gmail.com', 0, 3, NULL, NULL),
-('Krzysztof', 'Wojcik', 'krzysztof800@gmail.com', 1, 3, 'Magazyn', NULL),
-('Jan', 'Kowalski', 'jan95@gmail.com', 1, 3, 'Magazyn', NULL),
-('Piotr', 'Wojcik', 'piotr166@gmail.com', 0, 2, NULL, NULL),
-('Filip', 'Kozak', 'filip480@gmail.com', 1, 3, 'Warsztat', NULL),
-('Piotr', 'Majkut', 'piotr808@gmail.com', 0, 2, NULL, NULL),
-('Krzysztof', 'Wojcik', 'krzysztof162@gmail.com', 0, 2, NULL, NULL),
-('Rafal', 'Majkut', 'rafal930@gmail.com', 1, 3, 'Warsztat', NULL),
-('Michal', 'Nowak', 'michal125@gmail.com', 0, 3, NULL, NULL),
-('Jan', 'Nowak', 'jan336@gmail.com', 0, 3, NULL, NULL),
-('Krzysztof', 'Lis', 'krzysztof181@gmail.com', 0, 3, NULL, NULL),
-('Piotr', 'Wiwniewski', 'piotr641@gmail.com', 1, 3, 'Warsztat', NULL),
-('Bartosz', 'Kozak', 'bartosz369@gmail.com', 0, 3, NULL, NULL),
-('Michal', 'Zielinski', 'michal211@gmail.com', 0, 3, NULL, NULL),
-('Krzysztof', 'Majewski', 'krzysztof682@gmail.com', 0, 2, NULL, NULL),
-('Filip', 'Kozak', 'filip267@gmail.com', 0, 2, NULL, NULL),
-('Andrzej', 'Lis', 'andrzej678@gmail.com', 1, 3, 'Warsztat', NULL),
-('Oskar', 'Kozak', 'oskar620@gmail.com', 0, 2, NULL, NULL),
-('Oskar', 'Majkut', 'oskar326@gmail.com', 1, 3, 'Magazyn', NULL);
+('Bartosz', 'Kozak',             'bartosz220@gmail.com', 1, NULL,         NULL,               'Właściciel'),
+('Adam',   'Nowak',             'adam270@gmail.com',     1, 0,            NULL,                 'Sekretarz'),
+('Krzysztof', 'Wojcik',        'krzysztof800@gmail.com', 1, 0,           'Magazyn',           'Kierownik Magazynu'),
+('Jan',    'Kowalski',          'jan95@gmail.com',       1, 0,            'Warsztat',          'Kierownik Warsztatu'),
+('Piotr',  'Wojcik',            'piotr166@gmail.com',    0, 2,            NULL,               NULL),
+('Filip',  'Kozak',             'filip480@gmail.com',    1, 3,            'Warsztat',         NULL),
+('Piotr',  'Majkut',            'piotr808@gmail.com',    0, 2,            NULL,               NULL),
+('Krzysztof', 'Wojcik',        'krzysztof162@gmail.com', 1, 2,           'Magazyn',               NULL),
+('Rafal',  'Majkut',            'rafal930@gmail.com',    1, 3,            'Warsztat',         NULL),
+('Michal', 'Nowak',             'michal125@gmail.com',   0, 3,            NULL,               NULL),
+('Jan',    'Nowak',             'jan336@gmail.com',      1, 2,            'Magazyn',               NULL),
+('Krzysztof', 'Lis',           'krzysztof181@gmail.com', 0, 3,            NULL,               NULL),
+('Piotr',  'Wiwniewski',        'piotr641@gmail.com',    1, 3,            'Warsztat',         NULL),
+('Bartosz', 'Kozak',            'bartosz369@gmail.com',  0, 3,            NULL,               NULL),
+('Michal', 'Zielinski',         'michal211@gmail.com',   0, 3,            NULL,               NULL),
+('Krzysztof', 'Majewski',       'krzysztof682@gmail.com', 0, 2,            NULL,               NULL),
+('Filip',  'Kozak',             'filip267@gmail.com',    0, 2,            NULL,               NULL),
+('Andrzej', 'Lis',              'andrzej678@gmail.com',  1, 3,            'Warsztat',         NULL),
+('Oskar',  'Kozak',             'oskar620@gmail.com',    0, 2,            NULL,               NULL),
+('Oskar',  'Majkut',            'oskar326@gmail.com',    1, 2,            'Magazyn',          NULL);
+
 
 INSERT INTO ZAMOWIENIA_NA_ZLOTO ([DATA], KOSZT, [STATUS], ILOSC, DOSTARCZANA_DO, FIRMA_TRANSPORTOWA) VALUES
 ('2011-04-19', 132798.94, 'zrealizowane', 246.54, 'Magazyn', 'MegaX'),
