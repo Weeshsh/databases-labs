@@ -37,7 +37,11 @@ INSERT INTO PRACOWNICY (IMIE, NAZWISKO, EMAIL, CZY_PRACUJE, PRZELOZONY, MIEJSCE_
 ('Filip',  'Kozak',             'filip267@gmail.com',    0, 2,            NULL,               NULL),
 ('Andrzej', 'Lis',              'andrzej678@gmail.com',  1, 3,            'Warsztat',         NULL),
 ('Oskar',  'Kozak',             'oskar620@gmail.com',    0, 2,            NULL,               NULL),
-('Oskar',  'Majkut',            'oskar326@gmail.com',    1, 2,            'Magazyn',          NULL);
+('Oskar',  'Majkut',            'oskar326@gmail.com',    1, 2,            'Magazyn',          NULL),
+-- dodatkowe dane zeby dzialaly zapytania
+('Maciej',  'Wesolowski',        'maciekk@gmail.com',    0, 0,            'Magazyn',         'Kierownik Magazynu'),
+('Karolina',  'Wojciechowska',        'karolinaa@gmail.com',    1, 0,            'Magazyn',         'Kierownik Magazynu'),
+('Aleksander', 'Debski',            'aleksanderr@gmail.com',  0, 0,            NULL,               'Sekretarz');
 
 
 INSERT INTO ZAMOWIENIA_NA_ZLOTO ([DATA], KOSZT, [STATUS], ILOSC, DOSTARCZANA_DO, FIRMA_TRANSPORTOWA) VALUES
@@ -45,7 +49,23 @@ INSERT INTO ZAMOWIENIA_NA_ZLOTO ([DATA], KOSZT, [STATUS], ILOSC, DOSTARCZANA_DO,
 ('2022-11-11', 189638.94, 'dostarczane', 41.06, 'Warsztat', 'GoldExpress'),
 ('2019-04-16', 197432.44, 'dostarczane', 24.47, 'Magazyn', 'TransportX'),
 ('2001-03-09', 175155.55, 'w realizacji', 222.88, 'Warsztat', 'GoldExpress'),
-('2007-10-27', 29347.01, 'dostarczane', 277.02, 'Magazyn', 'TransportExpress');
+-- dodatkowe dane zeby dzialaly zapytania
+('2007-10-27', 29347.01, 'dostarczane', 277.02, 'Magazyn', 'TransportExpress'),
+('2024-01-15', 125000.50, 'zrealizowane', 50.25, 'Magazyn', 'GoldExpress'),
+('2024-02-10', 94523.00, 'dostarczane', 75.00, 'Warsztat', 'MegaX'),
+('2024-03-05', 175432.80, 'w realizacji', 60.75, 'Magazyn', 'TransportX'),
+('2024-04-18', 55600.25, 'zrealizowane', 95.40, 'Warsztat', 'GoldExpress'),
+('2024-05-12', 135000.75, 'dostarczane', 40.00, 'Magazyn', 'TransportExpress'),
+('2024-06-25', 45000.50, 'zrealizowane', 120.00, 'Warsztat', 'MegaX'),
+('2024-07-08', 155000.90, 'dostarczane', 70.50, 'Magazyn', 'GoldExpress'),
+('2024-08-14', 198000.40, 'w realizacji', 55.00, 'Warsztat', 'TransportX'),
+('2024-09-19', 130500.30, 'zrealizowane', 85.20, 'Magazyn', 'GoldExpress'),
+('2024-10-23', 178000.15, 'dostarczane', 45.80, 'Warsztat', 'TransportExpress'),
+('2024-11-05', 21240.00, 'w realizacji', 110.25, 'Magazyn', 'MegaX'),
+('2024-12-10', 145000.60, 'zrealizowane', 35.60, 'Warsztat', 'GoldExpress'),
+('2024-01-28', 115432.75, 'dostarczane', 80.00, 'Magazyn', 'TransportX'),
+('2024-02-17', 175600.20, 'zrealizowane', 65.50, 'Warsztat', 'TransportExpress'),
+('2024-03-22', 125000.80, 'w realizacji', 90.75, 'Magazyn', 'GoldExpress');
 
 INSERT INTO PARTIE_SUROWCA (WAGA, DATA_DOSTAWY, ZAMOWIENIE) VALUES
 (22.97, '2023-07-29', 2),
@@ -114,26 +134,27 @@ INSERT INTO KLIENCI (NIP, NAZWA, EMAIL, NUMER_TELEFONU) VALUES
 ('5677525133', 'Etsy', 'etsy306@gmail.com', '142149365');
 
 INSERT INTO ZAMOWIENIA_NA_PRODUKTY ([DATA], [STATUS], KLIENT) VALUES
-('2018-07-07', 'anulowane', '6866963999'),
-('2016-09-10', 'przyjęte', '5212445276'),
-('2023-11-21', 'anulowane', '3186256726'),
-('2005-06-17', 'anulowane', '5212445276'),
-('2001-09-16', 'zrealizowane', '6866963999'),
-('2009-05-18', 'w realizacji', '4615435829'),
-('2010-10-12', 'zrealizowane', '1791688658'),
-('2019-02-07', 'zrealizowane', '3186256726'),
-('2006-02-14', 'anulowane', '1443418142'),
-('2019-01-28', 'zrealizowane', '7563736867'),
-('2012-10-20', 'zrealizowane', '9448779113'),
-('2023-03-09', 'w realizacji', '4468258529'),
-('2002-07-07', 'zrealizowane', '4468258529'),
-('2012-03-04', 'zrealizowane', '9654153614'),
-('2008-07-27', 'anulowane', '3186256726'),
-('2013-02-07', 'w realizacji', '1443418142'),
-('2003-11-29', 'zrealizowane', '6866963999'),
-('2011-07-17', 'anulowane', '4257871484'),
-('2018-09-16', 'zrealizowane', '8269934673'),
-('2007-03-14', 'przyjęte', '4959994644');
+-- Zmienione daty, zeby pasowaly do zapytan
+('2024-07-07', 'anulowane', '6866963999'),
+('2024-09-10', 'przyjęte', '5212445276'),
+('2024-11-21', 'anulowane', '3186256726'),
+('2024-06-17', 'anulowane', '5212445276'),
+('2024-09-16', 'zrealizowane', '6866963999'),
+('2024-05-18', 'w realizacji', '4615435829'),
+('2024-10-12', 'zrealizowane', '1791688658'),
+('2024-02-07', 'zrealizowane', '3186256726'),
+('2024-02-14', 'anulowane', '1443418142'),
+('2024-01-28', 'zrealizowane', '7563736867'),
+('2024-10-20', 'zrealizowane', '9448779113'),
+('2024-03-09', 'w realizacji', '4468258529'),
+('2024-07-07', 'zrealizowane', '4468258529'),
+('2024-03-04', 'zrealizowane', '9654153614'),
+('2024-07-27', 'anulowane', '3186256726'),
+('2024-02-07', 'w realizacji', '1443418142'),
+('2024-11-29', 'zrealizowane', '6866963999'),
+('2024-07-17', 'anulowane', '4257871484'),
+('2024-09-16', 'zrealizowane', '8269934673'),
+('2024-03-14', 'przyjęte', '4959994644');
 
 INSERT INTO ZAMOWIONE_PRODUKTY (ID_PRODUKTU, ID_ZAMOWIENIA, ILOSC) VALUES
 ('Naszyjnik typu 5', 9, 39),
