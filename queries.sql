@@ -1,0 +1,131 @@
+USE bd_laby;
+
+-- [1]
+-- Sugestia: Wydatki miesieczne na zloto w 2024.
+-- Modyfikacja: Brak. 
+SELECT 
+    FORMAT([DATA], 'yyyy-MM') AS miesiac,
+    SUM(KOSZT) AS koszta
+FROM ZAMOWIENIA_NA_ZLOTO
+WHERE YEAR([DATA])=2024
+GROUP BY FORMAT([DATA], 'yyyy-MM')
+ORDER BY miesiac ASC;
+
+-- [2]
+-- Sugestia: Pracownicy, ktorzy nie pracuja ale nadal maja dostep do bazy danych.
+-- Modyfikacja: Brak.
+SELECT 
+    IMIE, 
+    NAZWISKO,
+    STANOWISKO
+FROM PRACOWNICY
+JOIN STANOWISKA ON PRACOWNICY.STANOWISKO = STANOWISKA.NAZWA
+WHERE PRACOWNICY.CZY_PRACUJE = 0
+AND PRACOWNICY.STANOWISKO IS NOT NULL
+ORDER BY IMIE, NAZWISKO;
+
+-- [3]
+-- Sugestia: 5 klientow z najwieksza suma z zamowien w 2024
+-- Modyfikacja: Przez ostatnie 10 lat, >=2014
+SELECT TOP 5 
+    KLIENCI.NAZWA AS nazwa_klienta,
+    SUM(PRODUKTY.CENA_SPRZEDAZY * ZAMOWIONE_PRODUKTY.ILOSC) AS ile_wydal
+FROM KLIENCI 
+JOIN ZAMOWIENIA_NA_PRODUKTY ON KLIENCI.NIP = ZAMOWIENIA_NA_PRODUKTY.KLIENT
+JOIN ZAMOWIONE_PRODUKTY ON ZAMOWIENIA_NA_PRODUKTY.ID_ZAMOWIENIA = ZAMOWIONE_PRODUKTY.ID_ZAMOWIENIA
+JOIN PRODUKTY ON ZAMOWIONE_PRODUKTY.ID_PRODUKTU = PRODUKTY.NAZWA
+WHERE YEAR(ZAMOWIENIA_NA_PRODUKTY.[DATA]) >= 2014
+AND ZAMOWIENIA_NA_PRODUKTY.[STATUS] = 'zrealizowane'
+GROUP BY KLIENCI.NAZWA
+ORDER BY ile_wydal DESC;
+
+-- [4]
+-- Autorskie: Suma zrealizowanych zysków z zamówień/wypełnienia umów w ostatnich 4 miesiącach
+-- Modyfikacja: Suma dochodow i suma wydatkow ze zrealizowanych zamowien / "dostarczonych" dostaw w poprzednim kwartale
+WITH kwartal AS 
+( SELECT DATEADD(QUARTER, -1, GETDATE()) AS data_poczatkowa, GETDATE() AS data_koncowa )
+SELECT 
+    SUM(PRODUKTY.CENA_SPRZEDAZY * ZAMOWIONE_PRODUKTY.ILOSC) AS dochody,
+    SUM(ZAMOWIENIA_NA_ZLOTO.KOSZT) AS wydatki
+FROM ZAMOWIENIA_NA_PRODUKTY
+JOIN ZAMOWIONE_PRODUKTY ON ZAMOWIENIA_NA_PRODUKTY.ID_ZAMOWIENIA = ZAMOWIONE_PRODUKTY.ID_ZAMOWIENIA
+JOIN PRODUKTY ON ZAMOWIONE_PRODUKTY.ID_PRODUKTU = PRODUKTY.NAZWA
+JOIN ZAMOWIENIA_NA_ZLOTO ON ZAMOWIENIA_NA_ZLOTO.DATA BETWEEN 
+    (SELECT data_poczatkowa FROM kwartal) AND (SELECT data_koncowa FROM kwartal)
+WHERE ZAMOWIENIA_NA_PRODUKTY.[DATA] BETWEEN 
+    (SELECT data_poczatkowa FROM kwartal) AND (SELECT data_koncowa FROM kwartal)
+AND ZAMOWIENIA_NA_PRODUKTY.[STATUS] = 'zrealizowane'
+
+-- [5]
+-- Sugestia: Produkt przynoszący najmniej zysków.
+-- Modyfikacja: Brak.
+SELECT TOP 1
+    NAZWA AS ProductName,
+    (CENA_SPRZEDAZY - KOSZT_PRODUKCJI) * ILOSC AS Profit
+FROM PRODUKTY
+WHERE CZY_PRODUKOWANY = 1
+ORDER BY Profit ASC;
+
+-- -- Scenario 6: Monthly raw material usage for discounts
+-- SELECT
+--     FORMAT(Z.[DATA], 'yyyy-MM') AS Month,
+--     SUM(P.ILOSC_SUROWCA_POTRZEBNA_DO_WYPRODUKOWANIA * ZPR.ILOSC) AS TotalRawMaterialUsed
+-- FROM ZAMOWIENIA_NA_PRODUKTY Z
+-- JOIN ZAMOWIONE_PRODUKTY ZPR ON Z.ID_ZAMOWIENIA = ZPR.ID_ZAMOWIENIA
+-- JOIN PRODUKTY P ON ZPR.ID_PRODUKTU = P.NAZWA
+-- WHERE Z.[STATUS] = 'zrealizowane'
+-- GROUP BY FORMAT(Z.[DATA], 'yyyy-MM')
+-- HAVING SUM(P.ILOSC_SUROWCA_POTRZEBNA_DO_WYPRODUKOWANIA * ZPR.ILOSC) > 100;
+
+-- -- Scenario 7: Employees per manager
+-- SELECT 
+--     P2.IMIE AS ManagerFirstName,
+--     P2.NAZWISKO AS ManagerLastName,
+--     COUNT(P1.ID_PRACOWNIKA) AS NumberOfEmployees
+-- FROM PRACOWNICY P1
+-- JOIN PRACOWNICY P2 ON P1.PRZELOZONY = P2.ID_PRACOWNIKA
+-- GROUP BY P2.IMIE, P2.NAZWISKO
+-- ORDER BY NumberOfEmployees DESC;
+
+-- -- Scenario 8: Next three deliveries of raw materials
+-- SELECT TOP 3
+--     PS.ID_PARTII AS BatchID,
+--     PS.DATA_DOSTAWY AS DeliveryDate,
+--     PS.WAGA AS Weight
+-- FROM PARTIE_SUROWCA PS
+-- WHERE PS.DATA_DOSTAWY > GETDATE()
+-- ORDER BY PS.DATA_DOSTAWY ASC;
+
+
+-- [9]
+-- Autorskie: 5 produktów z najlepszą marżą
+-- Modyfikacja: 
+GO
+CREATE VIEW ActiveProductsWithMargin
+( nazwa_produktu, marza )
+    AS SELECT PRODUKTY.NAZWA,
+    CAST(REPLACE(PRODUKTY.MARZA, '%', '') AS INT) AS marza
+FROM PRODUKTY
+WHERE PRODUKTY.CZY_PRODUKOWANY = 1
+GO
+
+SELECT TOP 5
+    nazwa_produktu,
+    marza
+FROM ActiveProductsWithMargin
+ORDER BY marza DESC
+
+DROP VIEW ActiveProductsWithMargin;
+
+-- [10]
+-- Autorskie: Ile surowca w magazynie
+-- Modyfikacja: 
+SELECT 
+    PARTIE_SUROWCA.ID_PARTII AS BatchID,
+    PARTIE_SUROWCA.WAGA AS Weight,
+    PRODUKTY.ILOSC_SUROWCA_POTRZEBNA_DO_WYPRODUKOWANIA AS UsedInProduction
+FROM PARTIE_SUROWCA
+JOIN PRODUKTY ON PARTIE_SUROWCA.ID_PARTII = PRODUKTY.MIEJSCE_SKLADOWANIA
+JOIN ZAMOWIENIA_NA_ZLOTO ON PARTIE_SUROWCA.ZAMOWIENIE = ZAMOWIENIA_NA_ZLOTO.ID_ZAMOWIENIA
+JOIN PLACOWKI ON ZAMOWIENIA_NA_ZLOTO.DOSTARCZANA_DO = PLACOWKI.NAZWA
+WHERE PARTIE_SUROWCA.DATA_DOSTAWY IS NOT NULL;
