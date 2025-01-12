@@ -40,7 +40,7 @@ GROUP BY KLIENCI.NAZWA
 ORDER BY ile_wydal DESC;
 
 -- [4]
--- Autorskie: Suma zrealizowanych zysków z zamówień/wypełnienia umów w ostatnich 4 miesiącach
+-- Autorskie: Suma zrealizowanych zyskow z zamowień/wypelnienia umow w ostatnich 4 miesiacach
 -- Modyfikacja: Suma dochodow i suma wydatkow ze zrealizowanych zamowien / "dostarczonych" dostaw w poprzednim kwartale
 WITH kwartal AS 
 ( SELECT DATEADD(QUARTER, -1, GETDATE()) AS data_poczatkowa, GETDATE() AS data_koncowa )
@@ -56,17 +56,7 @@ WHERE ZAMOWIENIA_NA_PRODUKTY.[DATA] BETWEEN
     (SELECT data_poczatkowa FROM kwartal) AND (SELECT data_koncowa FROM kwartal)
 AND ZAMOWIENIA_NA_PRODUKTY.[STATUS] = 'zrealizowane'
 
--- [5]
--- Sugestia: Produkt przynoszący najmniej zysków.
--- Modyfikacja: Brak.
-SELECT TOP 1
-    NAZWA AS ProductName,
-    (CENA_SPRZEDAZY - KOSZT_PRODUKCJI) * ILOSC AS Profit
-FROM PRODUKTY
-WHERE CZY_PRODUKOWANY = 1
-ORDER BY Profit ASC;
-
--- -- Scenario 6: Monthly raw material usage for discounts
+-- Scenario 5: Monthly raw material usage for discounts
 -- SELECT
 --     FORMAT(Z.[DATA], 'yyyy-MM') AS Month,
 --     SUM(P.ILOSC_SUROWCA_POTRZEBNA_DO_WYPRODUKOWANIA * ZPR.ILOSC) AS TotalRawMaterialUsed
@@ -77,17 +67,17 @@ ORDER BY Profit ASC;
 -- GROUP BY FORMAT(Z.[DATA], 'yyyy-MM')
 -- HAVING SUM(P.ILOSC_SUROWCA_POTRZEBNA_DO_WYPRODUKOWANIA * ZPR.ILOSC) > 100;
 
--- -- Scenario 7: Employees per manager
--- SELECT 
---     P2.IMIE AS ManagerFirstName,
---     P2.NAZWISKO AS ManagerLastName,
---     COUNT(P1.ID_PRACOWNIKA) AS NumberOfEmployees
--- FROM PRACOWNICY P1
--- JOIN PRACOWNICY P2 ON P1.PRZELOZONY = P2.ID_PRACOWNIKA
--- GROUP BY P2.IMIE, P2.NAZWISKO
--- ORDER BY NumberOfEmployees DESC;
+-- Scenario 6: Employees per manager
+SELECT 
+    PRACOWNICY_2.IMIE AS ManagerFirstName,
+    PRACOWNICY_2.NAZWISKO AS ManagerLastName,
+    COUNT(PRACOWNICY_1.ID_PRACOWNIKA) AS NumberOfEmployees
+FROM PRACOWNICY PRACOWNICY_1
+JOIN PRACOWNICY PRACOWNICY_2 ON PRACOWNICY_1.PRZELOZONY = PRACOWNICY_2.ID_PRACOWNIKA
+GROUP BY PRACOWNICY_2.IMIE, PRACOWNICY_2.NAZWISKO
+ORDER BY NumberOfEmployees DESC;
 
--- -- Scenario 8: Next three deliveries of raw materials
+-- -- Scenario 7: Next three deliveries of raw materials
 -- SELECT TOP 3
 --     PS.ID_PARTII AS BatchID,
 --     PS.DATA_DOSTAWY AS DeliveryDate,
@@ -97,8 +87,8 @@ ORDER BY Profit ASC;
 -- ORDER BY PS.DATA_DOSTAWY ASC;
 
 
--- [9]
--- Autorskie: 5 produktów z najlepszą marżą
+-- [8]
+-- Autorskie: 5 produktow z najlepsza marża
 -- Modyfikacja: 
 GO
 CREATE VIEW ActiveProductsWithMargin
@@ -117,15 +107,16 @@ ORDER BY marza DESC
 
 DROP VIEW ActiveProductsWithMargin;
 
--- [10]
--- Autorskie: Ile surowca w magazynie
+-- [9]
+-- Autorskie: Ile powinno być surowca w warsztacie
 -- Modyfikacja: 
-SELECT 
-    PARTIE_SUROWCA.ID_PARTII AS BatchID,
-    PARTIE_SUROWCA.WAGA AS Weight,
-    PRODUKTY.ILOSC_SUROWCA_POTRZEBNA_DO_WYPRODUKOWANIA AS UsedInProduction
-FROM PARTIE_SUROWCA
-JOIN PRODUKTY ON PARTIE_SUROWCA.ID_PARTII = PRODUKTY.MIEJSCE_SKLADOWANIA
-JOIN ZAMOWIENIA_NA_ZLOTO ON PARTIE_SUROWCA.ZAMOWIENIE = ZAMOWIENIA_NA_ZLOTO.ID_ZAMOWIENIA
+SELECT
+    PLACOWKI.NAZWA AS miejsce,
+    SUM(ZAMOWIENIA_NA_ZLOTO.ILOSC) AS ile_kupione,
+    SUM(PRODUKTY.ILOSC_SUROWCA_POTRZEBNA_DO_WYPRODUKOWANIA * PRODUKTY.ILOSC) AS ile_zuzyto,
+    SUM(ZAMOWIENIA_NA_ZLOTO.ILOSC) - SUM(PRODUKTY.ILOSC_SUROWCA_POTRZEBNA_DO_WYPRODUKOWANIA * PRODUKTY.ILOSC) AS ile_powinno_byc
+FROM ZAMOWIENIA_NA_ZLOTO
 JOIN PLACOWKI ON ZAMOWIENIA_NA_ZLOTO.DOSTARCZANA_DO = PLACOWKI.NAZWA
-WHERE PARTIE_SUROWCA.DATA_DOSTAWY IS NOT NULL;
+JOIN PRODUKTY ON PLACOWKI.NAZWA = PRODUKTY.MIEJSCE_SKLADOWANIA
+WHERE PLACOWKI.NAZWA = 'Warsztat'
+GROUP BY PLACOWKI.NAZWA;
