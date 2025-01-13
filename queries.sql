@@ -41,7 +41,7 @@ ORDER BY ile_wydal DESC;
 
 -- [4]
 -- Autorskie: Suma zrealizowanych zyskow z zamowień/wypelnienia umow w ostatnich 4 miesiacach
--- Modyfikacja: Suma dochodow i suma wydatkow ze zrealizowanych zamowien / "dostarczonych" dostaw w poprzednim kwartale
+-- Modyfikacja: Suma dochodow i suma wydatkow ze zrealizowanych zamowien / dostaw w poprzednim kwartale
 WITH kwartal AS 
 ( SELECT DATEADD(QUARTER, -1, GETDATE()) AS data_poczatkowa, GETDATE() AS data_koncowa )
 SELECT 
@@ -55,6 +55,7 @@ JOIN ZAMOWIENIA_NA_ZLOTO ON ZAMOWIENIA_NA_ZLOTO.DATA BETWEEN
 WHERE ZAMOWIENIA_NA_PRODUKTY.[DATA] BETWEEN 
     (SELECT data_poczatkowa FROM kwartal) AND (SELECT data_koncowa FROM kwartal)
 AND ZAMOWIENIA_NA_PRODUKTY.[STATUS] = 'zrealizowane'
+AND ZAMOWIENIA_NA_ZLOTO.[STATUS] = 'zrealizowane'
 
 -- [5]
 -- Sugestia: Zuzycie zlota na produkcje bizuterii w poprzednim miesiącu
@@ -86,7 +87,7 @@ ORDER BY ilosc_pracownikow DESC;
 
 -- [7]
 -- Autorskie: 5 produktow z najlepsza marża
--- Modyfikacja: 
+-- Modyfikacja: Brak.
 GO
 CREATE VIEW ActiveProductsWithMargin
 ( nazwa_produktu, marza )
@@ -106,7 +107,7 @@ DROP VIEW ActiveProductsWithMargin;
 
 -- [8]
 -- Autorskie: Ile powinno być surowca w warsztacie
--- Modyfikacja: 
+-- Modyfikacja: Brak.
 SELECT
     PLACOWKI.NAZWA AS miejsce,
     SUM(ZAMOWIENIA_NA_ZLOTO.ILOSC) AS ile_kupione,
